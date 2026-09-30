@@ -1,0 +1,4 @@
+import {useMutation,useQuery,useQueryClient} from "@tanstack/react-query"; import {listConversationMessages,sendConversationMessage,createConversation} from "./api";
+export function useConversationMessages(id:string){return useQuery({queryKey:["conversation-messages",id],queryFn:()=>listConversationMessages(id),enabled:!!id,staleTime:5_000,refetchOnReconnect:true});}
+export function useSendConversationMessage(){const qc=useQueryClient();return useMutation({mutationFn:({conversationId,body}:{conversationId:string;body:string})=>sendConversationMessage(conversationId,body),onSuccess:(_,v)=>qc.invalidateQueries({queryKey:["conversation-messages",v.conversationId]})});}
+export function useCreateConversation(){return useMutation({mutationFn:(v:{kind:"public"|"private"|"group";title:string|null;memberIds:string[]})=>createConversation(v.kind,v.title,v.memberIds)});}
