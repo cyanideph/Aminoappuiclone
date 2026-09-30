@@ -1,0 +1,3 @@
+import {useMutation,useQuery,useQueryClient} from "@tanstack/react-query"; import {listNotifications,markAllNotificationsRead} from "./api";
+export function useNotifications(){return useQuery({queryKey:["notifications"],queryFn:()=>listNotifications(),staleTime:10_000,refetchOnReconnect:true});}
+export function useMarkAllNotificationsRead(){const qc=useQueryClient();return useMutation({mutationFn:markAllNotificationsRead,onSuccess:()=>qc.invalidateQueries({queryKey:["notifications"]})});}
