@@ -7,3 +7,7 @@ export async function toggleBlock(targetUserId:string){const {data,error}=await 
 
 export async function listFollowers(userId:string,limit=50){const {data,error}=await supabase.rpc("list_followers",{p_user_id:userId,p_limit:limit});if(error)throw error;return data??[];}
 export async function listFollowing(userId:string,limit=50){const {data,error}=await supabase.rpc("list_following",{p_user_id:userId,p_limit:limit});if(error)throw error;return data??[];}
+
+export async function listProfileComments(profileId:string,beforeCreatedAt:string|null=null,beforeId:string|null=null,limit=50){const {data,error}=await supabase.rpc("list_profile_comments",{p_profile_id:profileId,p_before_created_at:beforeCreatedAt,p_before_id:beforeId,p_limit:limit});if(error)throw error;return Array.isArray(data)?data:(data?.items??[]);}
+export async function addProfileComment(profileId:string,body:string,parentId:string|null=null){const {data,error}=await supabase.rpc("add_profile_comment",{p_profile_id:profileId,p_body:body,p_parent_id:parentId});if(error)throw error;return data;}
+export async function recordProfileVisit(profileId:string){const {data,error}=await supabase.rpc("record_profile_visit",{p_profile_id:profileId});if(error)throw error;return data;}
