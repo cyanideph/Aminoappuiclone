@@ -43,7 +43,7 @@ export default function Conversation(){
 
   useEffect(()=>{
     if(conversationId&&messages.length&&!read.isPending)read.mutate();
-  },[conversationId,messages.length,read.isPending]);
+  },[conversationId,messages.length,read.isPending,read.mutate]);
 
   const submit=(body:string)=>{
     setError("");
