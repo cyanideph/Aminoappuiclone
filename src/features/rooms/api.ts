@@ -1,5 +1,5 @@
 import {supabase} from "@/lib/supabase";
-export type Room={id:string;name:string;description:string|null;province_code:string|null;kind:"public"|"private"|"group";is_locked?:boolean;view_only?:boolean;announcement?:string|null;members_can_invite?:boolean};
+export type Room={id:string;name:string;description:string|null;province_code:string|null;kind:"public"|"private"|"group";is_locked?:boolean;view_only?:boolean;announcement?:string|null;members_can_invite?:boolean;pinned_message_id?:string|null};
 export async function listRooms(limit=50,offset=0):Promise<Room[]>{const {data,error}=await supabase.rpc("list_public_rooms",{p_limit:limit,p_offset:offset});if(error)throw error;return (data??[]) as Room[];}
 export async function joinRoom(roomId:string){const {data,error}=await supabase.rpc("join_room",{p_room_id:roomId});if(error)throw error;return data;}
 export async function listOnlineRoomMembers(roomId:string,limit=50){const {data,error}=await supabase.rpc("list_online_room_members",{p_room_id:roomId,p_limit:limit,p_offset:0,p_online_for:"5 minutes"});if(error)throw error;return data??[];}
