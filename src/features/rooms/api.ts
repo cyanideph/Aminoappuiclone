@@ -24,3 +24,6 @@ export async function listRoomReports(roomId:string,status:string="open",limit=3
 export async function createRoomReport(roomId:string,messageId:string|null,reportedUserId:string|null,reason:string){const {data,error}=await supabase.from("reports").insert({room_id:roomId,message_id:messageId,reported_user_id:reportedUserId,reason}).select().single();if(error)throw error;return data;}
 
 export async function getMyRoomMembership(roomId:string){const {data,error}=await supabase.from("room_members").select("room_id,user_id,role,nickname,chat_notifications_enabled,is_pinned").eq("room_id",roomId).maybeSingle();if(error)throw error;return data;}
+
+export async function listRoomMembers(roomId:string,limit=100,offset=0){const {data,error}=await supabase.rpc("list_room_members",{p_room_id:roomId,p_limit:limit,p_offset:offset});if(error)throw error;return data??[];}
+export async function setRoomCoHost(roomId:string,targetUserId:string,enabled:boolean){const {data,error}=await supabase.rpc("set_room_co_host",{p_room_id:roomId,p_target_user_id:targetUserId,p_enabled:enabled});if(error)throw error;return data;}
