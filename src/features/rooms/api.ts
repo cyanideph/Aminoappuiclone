@@ -27,3 +27,5 @@ export async function getMyRoomMembership(roomId:string){const {data,error}=awai
 
 export async function listRoomMembers(roomId:string,limit=100,offset=0){const {data,error}=await supabase.rpc("list_room_members",{p_room_id:roomId,p_limit:limit,p_offset:offset});if(error)throw error;return data??[];}
 export async function setRoomCoHost(roomId:string,targetUserId:string,enabled:boolean){const {data,error}=await supabase.rpc("set_room_co_host",{p_room_id:roomId,p_target_user_id:targetUserId,p_enabled:enabled});if(error)throw error;return data;}
+
+export async function updateRoomReport(reportId:string,status:"reviewing"|"resolved"|"dismissed",resolution:string|null){const {data,error}=await supabase.from("reports").update({status,resolution,resolved_by:status==="resolved"||status==="dismissed"?(await supabase.auth.getUser()).data.user?.id:null,resolved_at:status==="resolved"||status==="dismissed"?new Date().toISOString():null}).eq("id",reportId).select().single();if(error)throw error;return data;}
