@@ -1,3 +1,3 @@
-import {useMutation,useQuery,useQueryClient} from "@tanstack/react-query"; import {listNotifications,markAllNotificationsRead} from "./api";
-export function useNotifications(){return useQuery({queryKey:["notifications"],queryFn:()=>listNotifications(),staleTime:10_000,refetchOnReconnect:true});}
+import {useEffect} from "react"; import {useMutation,useQuery,useQueryClient} from "@tanstack/react-query"; import {listNotifications,markAllNotificationsRead} from "./api"; import {supabase} from "@/lib/supabase";
+export function useNotifications(){const qc=useQueryClient();const query=useQuery({queryKey:["notifications"],queryFn:()=>listNotifications(),staleTime:10_000,refetchOnReconnect:true});useEffect(()=>{const channel=supabase.channel("notifications-live").on("postgres_changes",{event:"INSERT",schema:"public",table:"notifications"},()=>qc.invalidateQueries({queryKey:["notifications"]})).subscribe();return()=>{void supabase.removeChannel(channel)}},[qc]);return query;}
 export function useMarkAllNotificationsRead(){const qc=useQueryClient();return useMutation({mutationFn:markAllNotificationsRead,onSuccess:()=>qc.invalidateQueries({queryKey:["notifications"]})});}
