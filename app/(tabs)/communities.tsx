@@ -1,20 +1,2 @@
-import {Text,TextInput,View} from "react-native";
-import {Screen} from "@/components/Screen";
-import {CommunityCard} from "@/components/CommunityCard";
-import {useRooms} from "@/features/rooms/hooks";
-
-export default function Communities(){
- const {data:rooms,isLoading,error}=useRooms();
- return <Screen>
-  <Text style={{fontSize:30,fontWeight:"900",color:"#17181A",marginTop:12}}>Communities</Text>
-  <TextInput placeholder="Search communities" placeholderTextColor="#92959C" style={{backgroundColor:"#fff",borderWidth:1,borderColor:"#E6E8EC",borderRadius:16,padding:14,marginVertical:18,fontSize:15}}/>
-  {isLoading?<Text style={{color:"#74777D",padding:16}}>Loading communities…</Text>:null}
-  {error?<Text style={{color:"#74777D",padding:16}}>Showing preview communities while the backend is unavailable.</Text>:null}
-  {(rooms&&rooms.length?rooms.map(room=><CommunityCard key={room.id} name={room.name} subtitle={room.province_code?room.province_code+" · "+room.kind:"Community · "+room.kind} color="#6C4DFF"/>):[
-   ["Music Lovers","128K members · Active now","#8B5CF6"],
-   ["Anime & Manga","94K members · 2.1K online","#EC4899"],
-   ["Gaming PH","61K members · 840 online","#0EA5E9"],
-   ["Photography","37K members · 510 online","#10B981"]
-  ].map(([name,subtitle,color])=><CommunityCard key={name} name={name} subtitle={subtitle} color={color}/>))}
- </Screen>;
-}
+import {useMemo,useState} from "react"; import {View} from "react-native"; import {Screen} from "@/components/Screen"; import {CommunityCard} from "@/components/CommunityCard"; import {useRooms} from "@/features/rooms/hooks"; import {Header,SearchBar,LoadingState,EmptyState,Text,Section} from "@/components/ui"; import {useTheme} from "@/theme";
+export default function Communities(){const {theme}=useTheme();const {data:rooms,isLoading,error}=useRooms();const [query,setQuery]=useState("");const preview=[["Music Lovers","128K members · Active now",theme.colors.secondary],["Anime & Manga","94K members · 2.1K online",theme.colors.social],["Gaming PH","61K members · 840 online",theme.colors.accent],["Photography","37K members · 510 online",theme.colors.success]] as const;const filtered=useMemo(()=>{const q=query.trim().toLowerCase();return (rooms&&rooms.length?rooms.map(r=>({name:r.name,subtitle:r.province_code?r.province_code+" · "+r.kind:"Community · "+r.kind,color:theme.colors.primary})):preview.map(([name,subtitle,color])=>({name,subtitle,color}))).filter(x=>!q||x.name.toLowerCase().includes(q)||x.subtitle.toLowerCase().includes(q));},[rooms,query,theme.colors]);return <Screen><Header title="Communities" subtitle="Explore communities and rooms"/><View style={{gap:16}}><SearchBar value={query} onChangeText={setQuery} placeholder="Search communities"/>{isLoading?<LoadingState label="Loading communities…"/>:error?<Text variant="caption">Preview mode — connect Supabase to load live communities.</Text>:null}{filtered.length?<Section title={rooms?.length?"Live communities":"Explore communities"}>{filtered.map(x=><CommunityCard key={x.name} name={x.name} subtitle={x.subtitle} color={x.color}/>)}</Section>:<EmptyState title="No communities found" message="Try another search term."/>}</View></Screen>}
