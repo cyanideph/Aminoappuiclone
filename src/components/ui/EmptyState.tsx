@@ -1,0 +1,2 @@
+import {ReactNode} from "react"; import {View} from "react-native"; import {Text,Button} from "./index";
+export function EmptyState({title,message,action,icon}:{title:string;message?:string;action?:ReactNode;icon?:ReactNode}){return <View style={{alignItems:"center",justifyContent:"center",paddingVertical:48,paddingHorizontal:24,gap:10}}>{icon}{<Text variant="subtitle">{title}</Text>}{message&&<Text style={{textAlign:"center",color:"#777"}}>{message}</Text>}{action}</View>}
