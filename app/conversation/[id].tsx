@@ -1,4 +1,4 @@
-import {useEffect,useState} from "react";
+import {useEffect,useRef,useState} from "react";
 import {useLocalSearchParams,router} from "expo-router";
 import {KeyboardAvoidingView,Platform,ScrollView,View} from "react-native";
 import {Ionicons} from "@expo/vector-icons";
@@ -40,10 +40,14 @@ export default function Conversation(){
   const [error,setError]=useState("");
   const [replying,setReplying]=useState<ConversationMessage|null>(null);
   const messages=(Array.isArray(query.data)?query.data:(query.data?.items??[])) as ConversationMessage[];
+  const lastReadMessageId=useRef<string|null>(null);
 
   useEffect(()=>{
-    if(conversationId&&messages.length&&!read.isPending)read.mutate();
-  },[conversationId,messages.length,read.isPending,read.mutate]);
+    const latest=messages.at(-1)?.id;
+    if(!conversationId||!latest||lastReadMessageId.current===latest||read.isPending)return;
+    lastReadMessageId.current=latest;
+    read.mutate();
+  },[conversationId,messages,read.isPending]);
 
   const submit=(body:string)=>{
     setError("");
