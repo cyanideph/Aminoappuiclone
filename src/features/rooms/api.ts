@@ -1,7 +1,6 @@
 import {supabase} from "@/lib/supabase";
-export type Room={id:string;name:string;description:string|null;province_code:string|null;kind:"public"|"private"|"group"};
-export async function listRooms():Promise<Room[]>{
- const {data,error}=await supabase.from("rooms").select("id,name,description,province_code,kind").eq("is_active",true).order("updated_at",{ascending:false});
- if(error) throw error;
- return (data??[]) as Room[];
-}
+export type Room={id:string;name:string;description:string|null;province_code:string|null;kind:"public"|"private"|"group";is_locked?:boolean;view_only?:boolean;announcement?:string|null};
+export async function listRooms(limit=50,offset=0):Promise<Room[]>{const {data,error}=await supabase.rpc("list_public_rooms",{p_limit:limit,p_offset:offset});if(error)throw error;return (data??[]) as Room[];}
+export async function joinRoom(roomId:string){const {data,error}=await supabase.rpc("join_room",{p_room_id:roomId});if(error)throw error;return data;}
+export async function sendRoomMessage(roomId:string,body:string,kind="text",replyToId:string|null=null,metadata:Record<string,unknown>={}){const {data,error}=await supabase.rpc("send_room_message",{p_room_id:roomId,p_body:body,p_kind:kind,p_reply_to_id:replyToId,p_metadata:metadata});if(error)throw error;return data;}
+export async function listRoomMessages(roomId:string,beforeCreatedAt:string|null=null,beforeId:string|null=null,limit=50){const {data,error}=await supabase.rpc("list_room_messages",{p_room_id:roomId,p_before_created_at:beforeCreatedAt,p_before_id:beforeId,p_limit:limit});if(error)throw error;return data;}
