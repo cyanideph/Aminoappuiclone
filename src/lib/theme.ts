@@ -1,1 +1,3 @@
-export const theme={background:"#F7F8FA",surface:"#FFFFFF",text:"#17181A",muted:"#74777D",border:"#E6E8EC",primary:"#6C4DFF",primarySoft:"#EEEAFE",online:"#31C96B"};
+import {lightTheme,darkTheme} from "../theme";
+export const theme=lightTheme;
+export {lightTheme,darkTheme};
