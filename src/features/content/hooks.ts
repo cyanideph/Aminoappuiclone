@@ -2,5 +2,5 @@ import {useMutation,useQuery,useQueryClient} from "@tanstack/react-query"; impor
 export function useContentFeed(roomId?:string|null,authorId?:string|null){return useQuery({queryKey:["content-feed",roomId??null,authorId??null],queryFn:()=>listContentFeed(roomId??null,authorId??null),staleTime:15_000,refetchOnReconnect:true});}
 export function useCreateContent(){const qc=useQueryClient();return useMutation({mutationFn:(v:{roomId:string|null;kind:string;title:string|null;body:string|null;metadata?:Record<string,unknown>})=>createContent(v.roomId,v.kind,v.title,v.body,v.metadata??{}),onSuccess:()=>qc.invalidateQueries({queryKey:["content-feed"]})});}
 export function useToggleContentReaction(){const qc=useQueryClient();return useMutation({mutationFn:({contentId,reaction}:{contentId:string;reaction:string})=>toggleReaction(contentId,reaction),onSuccess:()=>qc.invalidateQueries({queryKey:["content-feed"]})});}
-export function useToggleContentSave(){return useMutation({mutationFn:toggleSave});}
-export function useVotePoll(){return useMutation({mutationFn:({contentId,optionId}:{contentId:string;optionId:string})=>votePoll(contentId,optionId)});}
+export function useToggleContentSave(){const qc=useQueryClient();return useMutation({mutationFn:toggleSave,onSuccess:()=>qc.invalidateQueries({queryKey:["content-feed"]})});}
+export function useVotePoll(){const qc=useQueryClient();return useMutation({mutationFn:({contentId,optionId}:{contentId:string;optionId:string})=>votePoll(contentId,optionId),onSuccess:()=>qc.invalidateQueries({queryKey:["content-feed"]})});}
