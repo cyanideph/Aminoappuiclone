@@ -5,6 +5,7 @@ export async function getSocialState(targetUserId:string){const {data:{user}}=aw
 export async function toggleFollow(targetUserId:string){const {data,error}=await supabase.rpc("toggle_follow",{p_target_user_id:targetUserId});if(error)throw error;return data;}
 export async function toggleFavorite(targetUserId:string){const {data,error}=await supabase.rpc("toggle_favorite",{p_target_user_id:targetUserId});if(error)throw error;return data;}
 export async function toggleBlock(targetUserId:string){const {data,error}=await supabase.rpc("toggle_block",{p_target_user_id:targetUserId});if(error)throw error;return data;}
+export async function listBlockedUsers(limit=100){const {data,error}=await supabase.rpc("list_blocked_users",{p_limit:limit});if(error)throw error;return data??[];}
 export async function listFollowers(userId:string,limit=50){const {data,error}=await supabase.rpc("list_followers",{p_user_id:userId,p_limit:limit});if(error)throw error;return data??[];}
 export async function listFollowing(userId:string,limit=50){const {data,error}=await supabase.rpc("list_following",{p_user_id:userId,p_limit:limit});if(error)throw error;return data??[];}
 export async function listProfileComments(profileId:string,beforeCreatedAt:string|null=null,beforeId:string|null=null,limit=50){const {data,error}=await supabase.rpc("list_profile_comments",{p_profile_id:profileId,p_before_created_at:beforeCreatedAt,p_before_id:beforeId,p_limit:limit});if(error)throw error;return Array.isArray(data)?data:(data?.items??[]);}
