@@ -16,13 +16,12 @@ export async function pickMedia():Promise<PickedMedia[]>{
   });
 }
 
-export async function uploadMedia(asset:PickedMedia){
+export async function uploadMedia(asset:PickedMedia,bucket:"content-media"|"room-media"){
   const response=await fetch(asset.uri);
   if(!response.ok)throw new Error("Unable to read selected media.");
   const bytes=await response.arrayBuffer();
-  const bucket="content-media";
   const path="pending/"+Date.now()+"-"+asset.fileName;
   const result=await supabase.storage.from(bucket).upload(path,bytes,{contentType:asset.mimeType,upsert:false});
   if(result.error)throw result.error;
-  return result.data;
+  return {bucket,path};
 }
